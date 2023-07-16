@@ -51,9 +51,9 @@ if [ "$(/usr/bin/whoami)" == "root" ]; then
 		/usr/bin/apt install curl wget sudo openssl tar unzip -y &>/dev/null
 	fi
 
-#----------------------------------
+echo " #----------------------------------
 # Init cPanel Installation
-#----------------------------------
+#---------------------------------- ";
 
 	if [ ! -d /usr/local/cpanel ] ; then
 		/usr/bin/systemctl stop NetworkManager.service && /usr/bin/systemctl disable NetworkManager.service
@@ -63,7 +63,7 @@ if [ "$(/usr/bin/whoami)" == "root" ]; then
 		if [ -f /etc/redhat-release ]; then
 			if [ ! "$(/usr/bin/rpm -E %{rhel})" == "7" ]; then
 				cd /root && /usr/bin/mkdir cpanel_profile &>/dev/null && cd cpanel_profile && touch cpanel.config
-				echo “mysql-version=10.3” > /root/cpanel_profile/cpanel.config
+				
 			fi
 		fi
 		cd /home && /usr/bin/curl -o latest -L https://securedownloads.cpanel.net/latest && /usr/bin/sh latest
@@ -86,14 +86,14 @@ if [ "$(/usr/bin/whoami)" == "root" ]; then
 			/usr/bin/apt install ea-php74-php-ioncube12 ea-php81-php-ioncube12 -y &>/dev/null
 			/usr/bin/apt install ea-php*-php-sourceguardian ea-php*-php-ioncube10 -y &>/dev/null
 		fi
-		# Increasing php.ini limitations for all EA-PHP
+		echo " # Increasing php.ini limitations for all EA-PHP ";
 		/usr/bin/sed -i 's/disable_functions = .*/disable_functions = /' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
 		/usr/bin/sed -i 's/max_execution_time = .*/max_execution_time = 180/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
 		/usr/bin/sed -i 's/max_input_time = .*/max_input_time = 180/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
-		/usr/bin/sed -i 's/max_input_vars = .*/max_input_vars = 3000/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
-		/usr/bin/sed -i 's/memory_limit = .*/memory_limit = 128M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
-		/usr/bin/sed -i 's/post_max_size = .*/post_max_size = 64M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
-		/usr/bin/sed -i 's/upload_max_filesize = .*/upload_max_filesize = 64M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
+		/usr/bin/sed -i 's/max_input_vars = .*/max_input_vars = 5000/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
+		/usr/bin/sed -i 's/memory_limit = .*/memory_limit = 1384M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
+		/usr/bin/sed -i 's/post_max_size = .*/post_max_size = 2000M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
+		/usr/bin/sed -i 's/upload_max_filesize = .*/upload_max_filesize = 8000M/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
 		/usr/bin/sed -i 's/allow_url_fopen = .*/allow_url_fopen = On/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
 		/usr/bin/sed -i 's/file_uploads = .*/file_uploads = On/' /opt/cpanel/ea-php*/root/etc/php.ini &>/dev/null
 		/usr/local/cpanel/whostmgr/bin/whostmgr2 --updatetweaksettings &>/dev/null
@@ -115,7 +115,7 @@ if [ "$(/usr/bin/whoami)" == "root" ]; then
 			/usr/bin/apt install ea-php*-php-gmp ea-php*-php-bcmath ea-php*-php-intl ea-php*-php-fileinfo -y &>/dev/null
 			/usr/bin/apt install ea-php*-php-pdo ea-php*-php-imap ea-php*-php-ldap ea-php*-php-zip -y &>/dev/null
 		fi
-		# Performing Tweak Settings for cPanel server
+		echo " # Performing Tweak Settings for cPanel server ";
 		/usr/bin/sed -i 's/allowremotedomains=.*/allowremotedomains=1/' /var/cpanel/cpanel.config &>/dev/null
 		/usr/bin/sed -i 's/resetpass=.*/resetpass=0/' /var/cpanel/cpanel.config &>/dev/null
 		/usr/bin/sed -i 's/resetpass_sub=.*/resetpass_sub=0/' /var/cpanel/cpanel.config &>/dev/null
@@ -133,7 +133,7 @@ if [ "$(/usr/bin/whoami)" == "root" ]; then
 			/usr/bin/wget https://repo.imunify360.cloudlinux.com/defence360/imav-deploy.sh -O /root/imav-deploy.sh &>/dev/null
 			/usr/bin/chmod +x /root/imav-deploy.sh && /root/imav-deploy.sh --uninstall &>/dev/null && rm -f /root/imav-deploy.sh &>/dev/null
 		fi
-		# Disabling IPv6 address on the server's network
+		echo " # Disabling IPv6 address on the server's network ";
 		grep -q '^net.ipv6.conf.all.disable_ipv6 = .*' /etc/sysctl.conf && grep -q '^net.ipv6.conf.default.disable_ipv6 = .*' /etc/sysctl.conf
 		/usr/bin/sed -i 's/^net.ipv6.conf.all.disable_ipv6 = .*/net.ipv6.conf.all.disable_ipv6 = 1/' /etc/sysctl.conf
 		/usr/bin/sed -i 's/^net.ipv6.conf.default.disable_ipv6 = .*/net.ipv6.conf.default.disable_ipv6 = 1/' /etc/sysctl.conf
@@ -294,14 +294,7 @@ deploy_lscwp="0"" > "/root/lsws.options";
 				echo -n "CloudLinux not found! Would you like to install? (y/n) ";
 				read yesno < /dev/tty
 				if [ "x$yesno" = "xy" ] ; then
-					/usr/bin/wget https://repo.cloudlinux.com/cloudlinux/sources/cln/cldeploy -O /root/cldeploy &>/dev/null
-					cd /home && /usr/bin/sh cldeploy --skip-registration -k 999 &> /dev/null
-					/usr/bin/yum install lvemanager -y &> /dev/null
-					/usr/bin/yum groupinstall alt-php alt-nodejs alt-python alt-ruby -y &> /dev/null
-					/usr/bin/yum install ea-apache24-mod_suexec -y &> /dev/null
-					/usr/bin/yum install ea-apache24-mod-alt-passenger -y &> /dev/null
-					/usr/bin/yum install grub2 --disableexcludes=all -y &> /dev/null
-					/usr/bin/yum install cagefs -y &> /dev/null && /usr/sbin/cagefsctl –init &> /dev/null
+					/usr/bin/wget https://repo.cloudlinux.com/cloudlinux/sources/cln/cldeploy && sh cldeploy -i 
 					echo "Done! CloudLinux successfully installed on your server!";
 				else
 					echo "Successfully skipped the installation of CloudLinux.";
