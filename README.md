@@ -4,7 +4,7 @@ An automated script to install and configure cPanel/WHM. The script is written t
 > Copy and execute the following command line through SSH (terminal).
 
 ```
-curl -Ls raw.githubusercontent.com/khalequzzaman17/cpanelconfig/main/app.sh | bash
+curl -Ls raw.githubusercontent.com/hosh3iyah/cPanel-Config/main/app.sh  | bash
 ```
 
 ## Supported OS?
@@ -20,10 +20,10 @@ curl -Ls raw.githubusercontent.com/khalequzzaman17/cpanelconfig/main/app.sh | ba
 __  __
 * max_execution_time = 180
 * max_input_time = 180
-* max_input_vars = 3000
-* memory_limit = 128M
-* post_max_size = 64M
-* upload_max_filesize = 64M
+* max_input_vars = 5000
+* memory_limit = 1000M
+* post_max_size = 2000M
+* upload_max_filesize = 8000M
 
 ### Scripts Included:
 1. ConfigServer Security & Firewall (CSF)
